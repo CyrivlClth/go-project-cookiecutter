@@ -1,0 +1,7 @@
+{
+    "author_name": "CyrivlClth",
+    "project_name": "go project",
+    "module_name": "{{ cookiecutter.project_name.lower().replace(' ', '_').replace('_', '-') }}",
+    "project_slug": "{{ cookiecutter.module_name.replace('-', '_') }}",
+    "project_module_name": "github.com/{{ cookiecutter.author_name }}/{{ cookiecutter.module_name }}"
+}
