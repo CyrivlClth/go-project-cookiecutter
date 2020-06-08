@@ -3,19 +3,34 @@ package database
 import (
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
+
+	"{{cookiecutter.project_module_name}}/model"
 )
 
-var DB *gorm.DB
+var db *gorm.DB
 
-func init() {
-	var err error
-	DB, err = gorm.Open("sqlite3", ":memory:")
-	if err != nil {
-		panic(err)
-	}
-	DB.LogMode(true)
+type Config struct {
+	Host     string
+	Port     int
+	Username string
+	Password string
+	Database string
+	Debug    bool
 }
 
-func Migrate(models ...interface{}) error {
-	return DB.AutoMigrate(models...).Error
+func InitDatabase(config Config) error {
+	var err error
+	db, err = gorm.Open("sqlite3", ":memory:")
+	if err != nil {
+		return err
+	}
+	if config.Debug {
+		db.LogMode(config.Debug)
+	}
+	db.AutoMigrate(&model.Article{})
+	return nil
+}
+
+func GetDB() *gorm.DB {
+	return db
 }

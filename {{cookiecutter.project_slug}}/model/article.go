@@ -2,15 +2,7 @@ package model
 
 import (
 	"github.com/jinzhu/gorm"
-
-	"{{cookiecutter.project_module_name}}/global/database"
 )
-
-func init() {
-	if err := database.Migrate(&Article{}); err != nil {
-		panic(err)
-	}
-}
 
 type Article struct {
 	ID      uint   `json:"id"`

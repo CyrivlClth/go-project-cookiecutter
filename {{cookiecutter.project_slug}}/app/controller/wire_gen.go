@@ -8,17 +8,15 @@ package controller
 import (
 	"{{cookiecutter.project_module_name}}/app/service"
 	"{{cookiecutter.project_module_name}}/global/database"
+	"{{cookiecutter.project_module_name}}/global/logger"
 )
 
 // Injectors from wire.go:
 
 func InitArticleHandler() ArticleHandler {
-	db := _wireDBValue
-	articleService := service.NewArticleService(db)
+	db := database.GetDB()
+	logrusLogger := logger.GetInstance()
+	articleService := service.NewArticleService(db, logrusLogger)
 	controllerArticleHandler := NewArticleHandler(articleService)
 	return controllerArticleHandler
 }
-
-var (
-	_wireDBValue = database.DB
-)

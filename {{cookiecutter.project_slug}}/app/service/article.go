@@ -2,6 +2,7 @@ package service
 
 import (
 	"github.com/jinzhu/gorm"
+	"github.com/sirupsen/logrus"
 
 	"{{cookiecutter.project_module_name}}/model"
 )
@@ -17,15 +18,17 @@ type ArticleService interface {
 	Delete(id uint) error
 }
 
-func NewArticleService(db *gorm.DB) ArticleService {
-	return &articleService{db: db}
+type articleService struct {
+	db     *gorm.DB
+	logger *logrus.Logger
 }
 
-type articleService struct {
-	db *gorm.DB
+func NewArticleService(db *gorm.DB, logger *logrus.Logger) ArticleService {
+	return &articleService{db: db, logger: logger}
 }
 
 func (a *articleService) List(filter ArticleFilter) ([]model.Article, error) {
+	a.logger.Info(filter)
 	return model.ListArticle(a.db)
 }
 
