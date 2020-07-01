@@ -1,21 +1,37 @@
 package database
 
 import (
+	"sync"
+
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
 )
 
-var DB *gorm.DB
+var (
+	ins  *gorm.DB
+	once sync.Once
+)
 
-func init() {
-	var err error
-	DB, err = gorm.Open("sqlite3", ":memory:")
-	if err != nil {
-		panic(err)
-	}
-	DB.LogMode(true)
+type Config struct {
+	Dsn       string
+	Debug     bool
+	Singleton bool
 }
 
-func Migrate(models ...interface{}) error {
-	return DB.AutoMigrate(models...).Error
+func New(config Config) (*gorm.DB, error) {
+	db, err := gorm.Open("sqlite3", config.Dsn)
+	if err != nil {
+		return nil, err
+	}
+	db.LogMode(config.Debug)
+	if config.Singleton {
+		once.Do(func() {
+			ins = db
+		})
+	}
+	return db, nil
+}
+
+func GetInstance() *gorm.DB {
+	return ins
 }
